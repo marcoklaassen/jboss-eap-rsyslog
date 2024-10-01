@@ -1,0 +1,18 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: jboss-rsyslog
+  namespace: jboss-eap-test
+  labels: {}
+spec:
+  to:
+    kind: Service
+    name: jboss-rsyslog
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+    destinationCACertificate: ''
+  host: jboss-rsyslog-jboss-eap-test.apps.ocp4.klaassen.click
+  port:
+    targetPort: 8080
+  alternateBackends: []

@@ -5,7 +5,7 @@ metadata:
 spec:
   workspaces:
     - name: shared-workspace
-    - name: local-maven-repo
+    - name: maven-settings
   params:
     - description: url of the git repo for the code of deployment
       name: git-url
@@ -15,10 +15,6 @@ spec:
       name: git-revision
       type: string
       default: main
-    - description: path to be used from repo of the code for deployment
-      name: git-path
-      type: string
-      default: hello-world-app
     - description: image to be built from the code
       name: IMAGE
       type: string
@@ -26,14 +22,14 @@ spec:
     - description: dockerfile location
       name: DOCKERFILE
       type: string
-      default: src/main/docker/Containerfile
+      default: hello-world-app/src/main/docker/Containerfile
   tasks:
     - name: fetch-repository
       params:
         - name: url
           value: $(params.git-url)
         - name: subdirectory
-          value: $(params.git-path)
+          value: ''
         - name: deleteExisting
           value: 'true'
         - name: revision
@@ -47,27 +43,22 @@ spec:
     - name: build-artifact
       runAfter:
         - fetch-repository
-      taskSpec:
-        workspaces:
-          - name: source
-            description: the source code
-          - name: maven-repo
-            description: the local maven repository
-        steps:
-          - name: build-executable
-            resources:
-              requests:
-                memory: 8Gi
-            image: registry.redhat.io/ubi8/openjdk-11:1.20-2.1727147549
-            workingDir: /workspace/source
-            command:
-              - mvn
-              - package
+      taskRef:
+        kind: ClusterTask
+        name: maven
+      params:
+        - name: CONTEXT_DIR
+          value: ./hello-world-app
+        - name: MAVEN_IMAGE
+          value: registry.redhat.io/ubi8/openjdk-17@sha256:e8cc2e476282b75d89c73057bfa713db22d72bdb2808d62d981a84c33beb2575
+        - name: GOALS
+          value:
+            - package            
       workspaces:
         - name: source
           workspace: shared-workspace
-        - name: maven-repo
-          workspace: local-maven-repo
+        - name: maven-settings
+          workspace: maven-settings
     - name: build-image
       params:
         - name: IMAGE
