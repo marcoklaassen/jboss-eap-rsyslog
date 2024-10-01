@@ -1,0 +1,84 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: jboss-eap-pipeline
+spec:
+  workspaces:
+    - name: shared-workspace
+    - name: local-maven-repo
+  params:
+    - description: url of the git repo for the code of deployment
+      name: git-url
+      type: string
+      default: https://github.com/marcoklaassen/jboss-eap-rsyslog.git
+    - description: revision to be used from repo of the code for deployment
+      name: git-revision
+      type: string
+      default: main
+    - description: path to be used from repo of the code for deployment
+      name: git-path
+      type: string
+      default: hello-world-app
+    - description: image to be built from the code
+      name: IMAGE
+      type: string
+      default: quay.io/mklaasse/jboss-eap-rsyslog:latest
+    - description: dockerfile location
+      name: DOCKERFILE
+      type: string
+      default: src/main/docker/Containerfile
+  tasks:
+    - name: fetch-repository
+      params:
+        - name: url
+          value: $(params.git-url)
+        - name: subdirectory
+          value: $(params.git-path)
+        - name: deleteExisting
+          value: 'true'
+        - name: revision
+          value: $(params.git-revision)
+      taskRef:
+        kind: ClusterTask
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+    - name: build-artifact
+      runAfter:
+        - fetch-repository
+      taskSpec:
+        workspaces:
+          - name: source
+            description: the source code
+          - name: maven-repo
+            description: the local maven repository
+        steps:
+          - name: build-executable
+            resources:
+              requests:
+                memory: 8Gi
+            image: registry.redhat.io/ubi8/openjdk-11:1.20-2.1727147549
+            workingDir: /workspace/source
+            command:
+              - mvn
+              - package
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+        - name: maven-repo
+          workspace: local-maven-repo
+    - name: build-image
+      params:
+        - name: IMAGE
+          value: $(params.IMAGE)
+        - name: DOCKERFILE
+          value: $(params.DOCKERFILE)
+      runAfter:
+        - build-artifact
+      taskRef:
+        kind: ClusterTask
+        name: buildah
+      workspaces:
+        - name: source
+          workspace: shared-workspace
