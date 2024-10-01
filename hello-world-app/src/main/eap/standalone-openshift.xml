@@ -95,6 +95,15 @@
                     <named-formatter name="COLOR-PATTERN"/>
                 </formatter>
             </console-handler>
+            <syslog-handler name="SYSLOG">
+                <level name="INFO"/>
+                <server-address value="localhost"/>
+                <app-name value="JBOSS"/>
+                <formatter>
+                    <syslog-format syslog-type="RFC3164"/>
+                </formatter>
+                <facility value="local-use-6"/>
+            </syslog-handler>
             <logger category="com.arjuna">
                 <level name="WARN"/>
             </logger>
@@ -107,21 +116,11 @@
             <logger category="sun.rmi">
                 <level name="WARN"/>
             </logger>
-            <syslog-handler name="SYSLOG">
-                <app-name value="JBoss"/>
-                <level name="INFO"/>
-                <server-address value="localhost" />
-                <port value="2514"/>
-                <facility value="local-use-6"/>
-                <formatter>
-                    <syslog-format syslog-type="RFC5424"/>
-                </formatter>
-            </syslog-handler>
             <root-logger>
                 <level name="INFO"/>
                 <handlers>
                     <handler name="CONSOLE"/>
-                    <handler name="SYSLOG" />
+                    <handler name="SYSLOG"/>
                 </handlers>
             </root-logger>
             <formatter name="COLOR-PATTERN">
