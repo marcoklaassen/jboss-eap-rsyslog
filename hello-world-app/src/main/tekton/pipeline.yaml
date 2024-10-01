@@ -6,6 +6,7 @@ spec:
   workspaces:
     - name: shared-workspace
     - name: maven-settings
+    - name: quayconfig
   params:
     - description: url of the git repo for the code of deployment
       name: git-url
@@ -73,3 +74,5 @@ spec:
       workspaces:
         - name: source
           workspace: shared-workspace
+        - name: dockerconfig
+          workspace: quayconfig
