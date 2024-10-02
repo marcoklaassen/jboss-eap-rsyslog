@@ -6,4 +6,9 @@ RUN yum -y install nc
 COPY hello-world-app/src/main/rsyslog/rsyslog.conf /etc/rsyslog.conf
 COPY hello-world-app/src/main/rsyslog/rsyslog.eap.conf /etc/rsyslog.d/rsyslog.eap.conf
 
+RUN chgrp -R 0 /var/log && \
+    chmod -R g+rwX /var/log
+
+USER 1001
+
 CMD ["sh", "-c", "/usr/sbin/rsyslogd -i /tmp/rsyslog.pid -n -f /etc/rsyslog.conf"]
