@@ -1,11 +1,10 @@
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: jboss-eap-pipeline
+  name: rsyslog-server-pipeline
 spec:
   workspaces:
     - name: shared-workspace
-    - name: maven-settings
     - name: quayconfig
   params:
     - description: url of the git repo for the code of deployment
@@ -19,11 +18,11 @@ spec:
     - description: image to be built from the code
       name: IMAGE
       type: string
-      default: quay.io/mklaasse/jboss-eap-rsyslog:latest
+      default: quay.io/mklaasse/rsyslog-server:latest
     - description: dockerfile location
       name: DOCKERFILE
       type: string
-      default: hello-world-app/src/main/docker/Containerfile
+      default: hello-world-app/src/main/docker/Containerfile.rsyslog
   tasks:
     - name: fetch-repository
       params:
@@ -41,25 +40,6 @@ spec:
       workspaces:
         - name: output
           workspace: shared-workspace
-    - name: build-artifact
-      runAfter:
-        - fetch-repository
-      taskRef:
-        kind: ClusterTask
-        name: maven
-      params:
-        - name: CONTEXT_DIR
-          value: ./hello-world-app
-        - name: MAVEN_IMAGE
-          value: registry.redhat.io/ubi8/openjdk-17@sha256:e8cc2e476282b75d89c73057bfa713db22d72bdb2808d62d981a84c33beb2575
-        - name: GOALS
-          value:
-            - package            
-      workspaces:
-        - name: source
-          workspace: shared-workspace
-        - name: maven-settings
-          workspace: maven-settings
     - name: build-image
       params:
         - name: IMAGE
@@ -67,7 +47,7 @@ spec:
         - name: DOCKERFILE
           value: $(params.DOCKERFILE)
       runAfter:
-        - build-artifact
+        - fetch-repository
       taskRef:
         kind: ClusterTask
         name: buildah

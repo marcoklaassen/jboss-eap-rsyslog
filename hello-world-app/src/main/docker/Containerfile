@@ -1,5 +1,0 @@
-# FROM registry.redhat.io/jboss-eap-7/eap74-openjdk11-openshift-rhel8:7.4.18-3.1724180403
-FROM image-registry.openshift-image-registry.svc:5000/jboss-eap-test/eap74-openjdk11-openshift-rhel8:7.4.18-3.1724180403
-
-COPY hello-world-app/target/jboss-rsyslog.war /opt/eap/standalone/deployments/jboss-rsyslog.war
-COPY hello-world-app/src/main/eap/standalone-openshift.xml /opt/eap/standalone/configuration/standalone-openshift.xml

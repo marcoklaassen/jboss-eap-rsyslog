@@ -1,0 +1,78 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: jboss-eap-pipeline
+spec:
+  workspaces:
+    - name: shared-workspace
+    - name: maven-settings
+    - name: quayconfig
+  params:
+    - description: url of the git repo for the code of deployment
+      name: git-url
+      type: string
+      default: https://github.com/marcoklaassen/jboss-eap-rsyslog.git
+    - description: revision to be used from repo of the code for deployment
+      name: git-revision
+      type: string
+      default: main
+    - description: image to be built from the code
+      name: IMAGE
+      type: string
+      default: quay.io/mklaasse/jboss-eap-rsyslog:latest
+    - description: dockerfile location
+      name: DOCKERFILE
+      type: string
+      default: hello-world-app/src/main/docker/Containerfile.eap
+  tasks:
+    - name: fetch-repository
+      params:
+        - name: url
+          value: $(params.git-url)
+        - name: subdirectory
+          value: ''
+        - name: deleteExisting
+          value: 'true'
+        - name: revision
+          value: $(params.git-revision)
+      taskRef:
+        kind: ClusterTask
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+    - name: build-artifact
+      runAfter:
+        - fetch-repository
+      taskRef:
+        kind: ClusterTask
+        name: maven
+      params:
+        - name: CONTEXT_DIR
+          value: ./hello-world-app
+        - name: MAVEN_IMAGE
+          value: registry.redhat.io/ubi8/openjdk-17@sha256:e8cc2e476282b75d89c73057bfa713db22d72bdb2808d62d981a84c33beb2575
+        - name: GOALS
+          value:
+            - package            
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+        - name: maven-settings
+          workspace: maven-settings
+    - name: build-image
+      params:
+        - name: IMAGE
+          value: $(params.IMAGE)
+        - name: DOCKERFILE
+          value: $(params.DOCKERFILE)
+      runAfter:
+        - build-artifact
+      taskRef:
+        kind: ClusterTask
+        name: buildah
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+        - name: dockerconfig
+          workspace: quayconfig
