@@ -1,3 +1,3 @@
-FROM registry.redhat.io/jboss-eap-7/eap74-openjdk11-runtime-openshift-rhel8:7.4.18-9.1724180401
+FROM registry.redhat.io/jboss-eap-7/eap74-openjdk11-openshift-rhel8:latest
 
 COPY hello-world-app/target/jboss-rsyslog.war /opt/eap/standalone/deployments/jboss-rsyslog.war

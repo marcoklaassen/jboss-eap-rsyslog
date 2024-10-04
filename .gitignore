@@ -2,3 +2,4 @@
 .vscode/
 hello-world-app/target
 hello-world-app/jboss-eap-74
+secret.imagerepo.yaml
