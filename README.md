@@ -1,35 +1,28 @@
-# JBoss EAP container image rsyslog example 
+# JBoss EAP container image rsyslog with TCP example 
 
-## rsyslog Container
+This is a sample repositiory for a JBoss EAP 7.4 application which is configured to send logs to a rsyslog server via TCP. 
 
-### Build
-```
-podman build -f hello-world-app/src/main/docker/Containerfile.rsyslog -t rsyslog-server:latest .
-```
+## Background & Why
 
-### Run
-```
-podman run -i --rm --name rsyslog-server rsyslog-server:latest
-```
+If you want to setup a rsync log handler in JBoss EAP 7.4 communicating via TCP you have to use a `custom-handler` instead of the `syslog-handler` because of missing attributes:
+* https://bugzilla.redhat.com/show_bug.cgi?id=1011882
+* https://issues.redhat.com/browse/WFCORE-109
 
-### Debug
-```
-podman exec -it rsyslog-server /bin/bash 
-```
 
-## JBoss EAP Container
+## Resources
 
-### Build
-```
-podman build -f hello-world-app/src/main/docker/Containerfile.eap -t jboss-eap-rsyslog:latest . 
-```
+In `hello-world-app/src/main/eap/config-eap.sh` there a both cli commands:
+* Add a syslog handler (upd only)
+* Add a customer handler (udp / tcp configurable)
 
-### Run
-```
-podman run -i --rm -p 8080:8080 --name jboss-eap-rsyslog jboss-eap-rsyslog
-```
+To reproduce and prove it I prepared a sample JBoss EAP app which just write an INFO Log line by GET `/jboss-rsyslog/rest/log`. 
 
-### Debug
-```
-podman exec -it jboss-eap-rsyslog /bin/bash
-```
+In `hello-world-app/src/main/k8s` you'll find the
+* JBoss EAP Pod, Service & Route
+* rsyslog Server Pod & Services for UDP and TCP
+
+In `hello-world-app/src/main/rsyslog` you'll find the base rsyslog config file and the TCP and UDP configurations. 
+
+In `hello-world-app/src/main/tekton` there are two tekton pipelines defined to build the JBoss EAP app & container and to build the rsyslog-server container. 
+
+The containerfiles to build the rsyslog TCP or UDP configured containers and the JBoss EAP container are located at `hello-world-app/src/main/docker`

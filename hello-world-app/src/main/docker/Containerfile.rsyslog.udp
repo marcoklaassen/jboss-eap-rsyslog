@@ -1,0 +1,14 @@
+FROM registry.access.redhat.com/ubi9/ubi:9.4-1214.1726694543
+
+RUN yum -y install rsyslog
+RUN yum -y install nc
+
+COPY hello-world-app/src/main/rsyslog/rsyslog.conf /etc/rsyslog.conf
+COPY hello-world-app/src/main/rsyslog/rsyslog.eap.udp.conf /etc/rsyslog.d/rsyslog.eap.conf
+
+RUN chgrp -R 0 /var/log && \
+    chmod -R g+rwX /var/log
+
+USER 1001
+
+CMD ["sh", "-c", "/usr/sbin/rsyslogd -i /tmp/rsyslog.pid -n -f /etc/rsyslog.conf"]

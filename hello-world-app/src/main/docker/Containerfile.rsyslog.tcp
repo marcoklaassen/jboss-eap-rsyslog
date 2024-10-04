@@ -4,7 +4,7 @@ RUN yum -y install rsyslog
 RUN yum -y install nc
 
 COPY hello-world-app/src/main/rsyslog/rsyslog.conf /etc/rsyslog.conf
-COPY hello-world-app/src/main/rsyslog/rsyslog.eap.conf /etc/rsyslog.d/rsyslog.eap.conf
+COPY hello-world-app/src/main/rsyslog/rsyslog.eap.tcp.conf /etc/rsyslog.d/rsyslog.eap.conf
 
 RUN chgrp -R 0 /var/log && \
     chmod -R g+rwX /var/log
