@@ -1,0 +1,3 @@
+# configure custom syslog-handler with TCP
+/opt/eap/bin/jboss-cli.sh '/subsystem=logging/custom-handler=syslog:add(module=org.jboss.logmanager, class=org.jboss.logmanager.handlers.SyslogHandler, properties={appName="JBOSS_SAMPLE_APPLICATION", facility="LOCAL_USE_6", serverHostname="rsyslog-server.jboss-eap-test.svc.cluster.local", hostname="jboss-sample-application", port="2514", syslogType="RFC3164", protocol="TCP", messageDelimiter="&#10;", useMessageDelimiter="true"}, formatter="%-5p [%c] (%t) %s%E%n")' --connect
+/opt/eap/bin/jboss-cli.sh '/subsystem=logging/root-logger=ROOT:add-handler(name=syslog)' --connect
