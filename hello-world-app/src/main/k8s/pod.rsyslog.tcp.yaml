@@ -1,20 +1,20 @@
 kind: Pod
 apiVersion: v1
 metadata:
-  name: rsyslog-server
+  name: rsyslog-server-tcp
   labels:
-    app: rsyslog-server
+    app: rsyslog-server-tcp
 spec:
   securityContext:
     runAsNonRoot: true
     seccompProfile:
       type: RuntimeDefault
   containers:
-    - name: rsyslog-server
-      image: 'quay.io/mklaasse/rsyslog-server:latest'
+    - name: rsyslog-server-tcp
+      image: 'quay.io/mklaasse/rsyslog-server:tcp'
       ports:
         - containerPort: 2514
-          protocol: UDP      
+          protocol: TCP
       securityContext:
         allowPrivilegeEscalation: false
         capabilities:

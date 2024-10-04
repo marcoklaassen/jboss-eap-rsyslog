@@ -26,3 +26,5 @@ In `hello-world-app/src/main/rsyslog` you'll find the base rsyslog config file a
 In `hello-world-app/src/main/tekton` there are two tekton pipelines defined to build the JBoss EAP app & container and to build the rsyslog-server container. 
 
 The containerfiles to build the rsyslog TCP or UDP configured containers and the JBoss EAP container are located at `hello-world-app/src/main/docker`
+
+When you deployed all the pods you can see that the `tcpsyslog` handler communicates with the `tcp` configured rsyslog server and the `udpsyslog` handler sends logs to the `udp` configured rsyslog server.
