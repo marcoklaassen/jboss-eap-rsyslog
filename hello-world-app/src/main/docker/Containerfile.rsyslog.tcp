@@ -7,7 +7,7 @@ COPY hello-world-app/src/main/rsyslog/rsyslog.conf /etc/rsyslog.conf
 COPY hello-world-app/src/main/rsyslog/rsyslog.eap.tcp.conf /etc/rsyslog.d/rsyslog.eap.conf
 
 RUN chgrp -R 0 /var/log && \
-    chmod -R g+rwX /var/log \
+    chmod -R g+rwX /var/log && \
     chgrp -R 0 /etc/rsyslog.d && \
     chmod -R g+rwX /etc/rsyslog.d
 
