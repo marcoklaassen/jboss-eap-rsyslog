@@ -15,6 +15,7 @@ spec:
       ports:
         - containerPort: 2514
           protocol: UDP      
+      imagePullPolicy: Always
       securityContext:
         allowPrivilegeEscalation: false
         capabilities:
