@@ -1,16 +1,38 @@
 kind: Pod
 apiVersion: v1
 metadata:
-  name: jboss-rsyslog
+  name: jboss-rsyslog-0
   labels:
-    app: jboss-rsyslog
+    app: jboss-rsyslog-0
 spec:
   securityContext:
     runAsNonRoot: true
     seccompProfile:
       type: RuntimeDefault
   containers:
-    - name: jboss-rsyslog
+    - name: jboss-rsyslog-0
+      image: 'quay.io/mklaasse/jboss-eap-rsyslog:latest'
+      ports:
+        - containerPort: 8080      
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+---
+kind: Pod
+apiVersion: v1
+metadata:
+  name: jboss-rsyslog-1
+  labels:
+    app: jboss-rsyslog-1
+spec:
+  securityContext:
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+  containers:
+    - name: jboss-rsyslog-1
       image: 'quay.io/mklaasse/jboss-eap-rsyslog:latest'
       ports:
         - containerPort: 8080      
