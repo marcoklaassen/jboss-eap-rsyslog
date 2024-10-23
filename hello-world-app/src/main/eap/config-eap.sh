@@ -10,7 +10,7 @@
     hostname='$(hostname)')' --connect
 /opt/eap/bin/jboss-cli.sh '/subsystem=logging/root-logger=ROOT:add-handler(name=udpsyslog)' --connect
 
-# configure custom syslog-handler with TCP (in the customer handler you are able to set the protocol field to TCP)
+# configure custom syslog-handler with TCP (in the custom handler you are able to set the protocol field to TCP)
 /opt/eap/bin/jboss-cli.sh '/subsystem=logging/custom-handler=tcpsyslog:add( \
     module=org.jboss.logmanager, class=org.jboss.logmanager.handlers.SyslogHandler, \
     properties={ \
