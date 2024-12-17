@@ -14,7 +14,7 @@
 /opt/eap/bin/jboss-cli.sh '/subsystem=logging/custom-handler=tcpsyslog:add( \
     module=org.jboss.logmanager, class=org.jboss.logmanager.handlers.SyslogHandler, \
     properties={ \
-        appName="JBOSS_SAMPLE_APPLICATION", \
+        appName="'$(echo $NAMESPACE/$DEPLOYMENTNAME/$HOSTNAME)'", \
         facility="LOCAL_USE_6", \
         serverHostname="rsyslog-server-tcp.jboss-eap-test.svc.cluster.local", \
         hostname="'$(hostname)'", \
